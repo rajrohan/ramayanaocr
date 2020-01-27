@@ -22,6 +22,7 @@ for filename in sorted(glob.glob(os.path.join(folder_path, '*.txt'))):
         fulltext.append( text )
 
 
+
 # convert list of text as string 
 def create_str_from_list(original_read_text):
     prepared_text = ""
@@ -143,3 +144,10 @@ text_file.close()
 text_file = open("../data/san_text.txt", "w")
 n = text_file.write(resultSan)
 text_file.close()
+
+from datetime import datetime
+now = datetime.now()
+current_time = now.strftime("%Y-%m-%d%S")
+filename = current_time+"_log"
+path = "../data/log/"
+log_tbl.to_csv(path+filename)
