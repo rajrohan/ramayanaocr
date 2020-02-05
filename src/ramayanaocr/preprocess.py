@@ -15,9 +15,9 @@ log_columns = ["seq","timestamp","process","function","output"]
 log_tbl = pd.DataFrame(columns = log_columns)
 
 # Read all seprate text file to one list
-folder_path = '../data/gt/txt/'
+folder_path = './data/gt/txt/'
 for filename in sorted(glob.glob(os.path.join(folder_path, '*.txt'))):
-    with open(filename, 'r') as f:
+    with open(filename, 'r',encoding='utf-8') as f:
         text = f.read()
         fulltext.append( text )
 
@@ -137,17 +137,17 @@ def sanskrit_hindi_separate(prepared_text):
 
 resultHin,resultSan = sanskrit_hindi_separate(cleaned_text)
 
-text_file = open("../data/hindi_text.txt", "w")
+text_file = open("./data/hindi.txt", "w",encoding='utf-8')
 n = text_file.write(resultHin)
 text_file.close()
 
-text_file = open("../data/san_text.txt", "w")
+text_file = open("./data/san.txt", "w",encoding='utf-8')
 n = text_file.write(resultSan)
 text_file.close()
 
 from datetime import datetime
 now = datetime.now()
 current_time = now.strftime("%Y-%m-%d%S")
-filename = current_time+"_log"
-path = "../data/log/"
-log_tbl.to_csv(path+filename)
+filename = current_time+".log"
+path = "./data/log/"
+log_tbl.to_csv(path+filename,index=False)
