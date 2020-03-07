@@ -505,13 +505,13 @@ df4.head()
 # In[186]:
 
 
-re.findall('[!@#$%^&*(),.?":{}|<>]',df4['1'][0])
+#re.findall('[!@#$%^&*(),.?":{}|<>]',df4['1'][0])
 
 
 # In[5]:
 
 
-re.sub('[!@#$%^&*(),.?"+:{}|<>0-9]', '', df4['1'][0])
+#re.sub('[!@#$%^&*(),.?"+:{}|<>0-9]', '', df4['1'][0])
 
 
 # In[184]:
@@ -523,7 +523,7 @@ df4['1'][0]
 # In[32]:
 
 
-df4.iloc[0]
+#df4.iloc[0]
 
 
 # In[26]:
@@ -552,7 +552,7 @@ topic_df
 # In[29]:
 
 
-#topic_df.to_csv('combined_model_topic_clean.csv')
+topic_df.to_csv('combined_model_topic_top_clean.csv')
 
 
 # In[ ]:
