@@ -85,6 +85,9 @@ cleaned_text = header_removal(fulltext)
 resultHin = keep_hindi(cleaned_text)
 store_file("./data/output/hindi.txt",resultHin)
 
+import objgraph
+objgraph.show_backrefs([resultHin], filename='./data/Function-graph.png')
+
 # now = datetime.now()
 # current_time = now.strftime("%Y-%m-%d%S")
 # filename = current_time+".log"
