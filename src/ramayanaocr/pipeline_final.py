@@ -41,8 +41,6 @@ import networkx as nx
 import math
 
 
-from prefect import task,Flow
-
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -59,18 +57,10 @@ warnings.filterwarnings("ignore")
 
 nlp = stanfordnlp.Pipeline ( lang = 'hi' ) 
 
-
-# In[3]:
-
-
 datafile = '../data/hindi.txt'
 with open(datafile,'r',encoding='utf-8') as f:
     text = f.read()
     text = text.split("॥")
-
-
-# In[179]:
-
 
 text_sentence = []
 i = 0

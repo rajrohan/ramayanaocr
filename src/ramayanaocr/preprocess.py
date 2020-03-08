@@ -22,7 +22,7 @@ def load_input_txt(path):
     for filename in sorted(glob.glob(os.path.join(folder_path, '*.txt'))):
         with open(filename, 'r',encoding='utf-8') as f:
             text = f.read()
-            fulltext.append( text )
+            fulltext.append(text.strip())
     return fulltext
 
 def header_removal(fulltext):
