@@ -1,11 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[2]:
-
-
-# https://www.kaggle.com/kernels/scriptcontent/11511967/notebook
-
 import string
 import numpy as np
 import pandas as pd
@@ -48,6 +40,9 @@ import stanfordnlp
 import networkx as nx
 import math
 
+
+from prefect import task,Flow
+
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -56,7 +51,7 @@ warnings.filterwarnings("ignore")
 # from bokeh.io import output_notebook
 # output_notebook()
 
-get_ipython().run_line_magic('matplotlib', 'inline')
+#get_ipython().run_line_magic('matplotlib', 'inline')
 
 
 # In[2]:
