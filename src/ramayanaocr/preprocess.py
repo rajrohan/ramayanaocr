@@ -3,108 +3,55 @@ import os,glob
 import pandas as pd
 from datetime import datetime
 import inspect
+from helper import create_str_from_list,create_match_list_n_log,clean_text,store_file
 
 fulltext = []
 regex_list = []
 
-seq = 1
+#seq = 1
 
 # Logging
 
-log_columns = ["seq","timestamp","process","function","output"]
-log_tbl = pd.DataFrame(columns = log_columns)
-
-# Read all seprate text file to one list
-folder_path = './data/gt/txt/'
-for filename in sorted(glob.glob(os.path.join(folder_path, '*.txt'))):
-    with open(filename, 'r',encoding='utf-8') as f:
-        text = f.read()
-        fulltext.append( text )
+# log_columns = ["seq","timestamp","process","function","output"]
+# log_tbl = pd.DataFrame(columns = log_columns)
 
 
+def load_input_txt(path):
+    # Read all seprate text file to one list
+    folder_path = path
+    for filename in sorted(glob.glob(os.path.join(folder_path, '*.txt'))):
+        with open(filename, 'r',encoding='utf-8') as f:
+            text = f.read()
+            fulltext.append( text )
+    return fulltext
 
-# convert list of text as string 
-def create_str_from_list(original_read_text):
-    prepared_text = ""
-    for line in fulltext:
-        line = line.split()
-#       print(line)
-        tmp_line = " ".join(line)
-        prepared_text +=tmp_line
-    return prepared_text
+def header_removal(fulltext):
+    # convert List to string
+    prepared_text= create_str_from_list(fulltext)
+    # remove all types of regex patterns
+    regex_page_number = r"\d[०-९][०-९][०-९]*\s"
+    regex_shrivalmiki_ramayana = r"\w.\w.\w.ल्म.\w.\s\w.\w.\w."
+    regex_sundar_kand = r"\wन्दर\sका.|\w.न्दर\sकाण.\w+|\w.न्दर\sकाण्ड." #"\wन्दर\sका|\w.न्दर\sका"
+    regex_sarg = r"\wर्ग\s[०-९]*\W.[०-९]+|\wर्ग\s[०-९]*\W.[०-९]*" #"\wर्ग\s[०-९]*.|\wर्ग\s[०-९]*.[०-९]"
 
-# remove regex matched text (for single pattern)
-# def clean_text(rgxed_list, text):
-#     new_text = text
-#     if len(rgxed_list) > 0:
-#         for rgx_match in rgxed_list:
-# #             print(rgx_match, type(rgx_match))
-#             new_text = re.sub(rgx_match, '', str(new_text)) # https://stackoverflow.com/questions/43727583/re-sub-erroring-with-expected-string-or-bytes-like-object
-#     return new_text
-
-def clean_text(pattern, text):
-    new_text = text
-    new_text = re.sub(pattern, '', str(new_text)) # https://stackoverflow.com/questions/43727583/re-sub-erroring-with-expected-string-or-bytes-like-object
-    return new_text
-
-
-# logging and creation of regex_matched_list(list containing strings that match the pattern)
-def whoami():
-    return inspect.stack()[1][3]
-def whosdaddy():
-    return inspect.stack()[2][3]
-
-def create_match_list_n_log(pattern,prepared_text):
-    matched_list = re.findall(pattern,
-                     prepared_text)
-    len_match = len(matched_list)
-    set_match = set(matched_list)
-    output_tuple = len_match,set_match
-#     print(output_tuple)
-#     regex_list.append(set_match)
-    
-    global seq,log_tbl    
-#     tbl(seq, datetime.now(),"parent: %s and child: %s" % (whosdaddy(),whoami()),pattern,output_tuple)
-    to_append = [seq, datetime.now(),"parent: %s and child: %s" % (whosdaddy(),whoami()),pattern,output_tuple]
-    a_series = pd.Series(to_append, index = log_tbl.columns)
-    log_tbl = log_tbl.append(a_series, ignore_index=True)
-    
-    seq += 1
-    return set_match
-
-
-
-
-# remove all types of regex patterns
-def header_removal(prepared_text,pattern_list):
+    pattern_list = [regex_page_number,
+                    regex_sarg,
+                    regex_sundar_kand,
+                    regex_shrivalmiki_ramayana]
     for pattern in pattern_list:
         tmp_match_set = create_match_list_n_log(pattern,prepared_text)
-#         print(len(tmp_match_set))
+         #print(len(tmp_match_set))
         regex_list.append(tmp_match_set)
     
-#     print(len(regex_list))
+     #print(len(regex_list))
     
     for pattern in pattern_list:
-#         print(len(single_list))
+         #print(len(single_list))
         prepared_text = clean_text(pattern,prepared_text)
-#         print(prepared_text[0:10])
+         #print(prepared_text[0:10])
     return prepared_text
 
-prepared_text = create_str_from_list(fulltext)
-
-regex_page_number = r"\d[०-९][०-९][०-९]*\s"
-regex_shrivalmiki_ramayana = r"\w.\w.\w.ल्म.\w.\s\w.\w.\w."
-regex_sundar_kand = r"\wन्दर\sका.|\w.न्दर\sकाण.\w+|\w.न्दर\sकाण्ड." #"\wन्दर\sका|\w.न्दर\sका"
-regex_sarg = r"\wर्ग\s[०-९]*\W.[०-९]+|\wर्ग\s[०-९]*\W.[०-९]*" #"\wर्ग\s[०-९]*.|\wर्ग\s[०-९]*.[०-९]"
-
-pattern_list = [regex_page_number,
-                regex_sarg,
-                regex_sundar_kand,
-                regex_shrivalmiki_ramayana]
-
-cleaned_text = header_removal(prepared_text,pattern_list)
-
-def sanskrit_hindi_separate(prepared_text):
+def keep_hindi(prepared_text):
     
     resultHin = ''
     resultSan = ''
@@ -131,23 +78,15 @@ def sanskrit_hindi_separate(prepared_text):
             prepared_text = after_muul[0]
             #print(x)
             break
-    
-    return resultHin,resultSan
+    return resultHin
 
+fulltext = load_input_txt('./data/input/')
+cleaned_text = header_removal(fulltext)
+resultHin = keep_hindi(cleaned_text)
+store_file("./data/output/hindi.txt",resultHin)
 
-resultHin,resultSan = sanskrit_hindi_separate(cleaned_text)
-
-text_file = open("./data/hindi.txt", "w",encoding='utf-8')
-n = text_file.write(resultHin)
-text_file.close()
-
-text_file = open("./data/san.txt", "w",encoding='utf-8')
-n = text_file.write(resultSan)
-text_file.close()
-
-from datetime import datetime
-now = datetime.now()
-current_time = now.strftime("%Y-%m-%d%S")
-filename = current_time+".log"
-path = "./data/log/"
-log_tbl.to_csv(path+filename,index=False)
+# now = datetime.now()
+# current_time = now.strftime("%Y-%m-%d%S")
+# filename = current_time+".log"
+# path = "./data/log/"
+# log_tbl.to_csv(path+filename,index=False)
