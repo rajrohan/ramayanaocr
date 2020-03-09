@@ -12,6 +12,7 @@ __pycache__/*
 .cache/*
 .*.swp
 */.ipynb_checkpoints/*
+*-checkpoint.ipynb
 .DS_Store
 
 # Project files
@@ -50,3 +51,5 @@ MANIFEST
 .venv*/
 src/ramayanaocr/.ipynb_checkpoints/Untitled-checkpoint.ipynb
 .vscode/settings.json
+/data/netag/best-model.pt
+/data/netag/final-model.pt

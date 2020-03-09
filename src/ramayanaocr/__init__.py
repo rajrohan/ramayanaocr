@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pkg_resources import get_distribution, DistributionNotFound
-from ramayanaocr.helper import *
+#from .helper import create_str_from_list
 
 try:
     # Change here if project is renamed and does not equal the package name

@@ -2,6 +2,11 @@ import inspect
 import re
 from datetime import datetime
 import pandas as pd
+from tqdm import tqdm
+from gensim.summarization import summarize
+import networkx as nx
+import math
+from sklearn.feature_extraction.text import CountVectorizer,TfidfTransformer
 
 seq = 1
 log_columns = ["seq","timestamp","process","function","output"]
@@ -71,3 +76,49 @@ def store_file(path,obj):
 #     return new_text
 
 
+def create_list_remove_number(text):
+    text_sentence = []
+    for word in tqdm(text):
+        if re.findall("^\s?\d+\s?",word):
+            continue
+        else:   
+            text_sentence.append(word)
+    return text_sentence
+
+def textrankTfIdf(document):
+    # sentence_tokenizer = PunktSentenceTokenizer()
+    # sentences = sentence_tokenizer.tokenize(document, 'hindi')
+
+    sentences = document
+    bow_matrix = CountVectorizer().fit_transform(sentences)
+    # normalized = TfidfTransformer(norm='l2', use_idf=True, use_bm25idf=True, smooth_idf=True,
+    #              delta_idf=False, sublinear_tf=False, bm25_tf=True).fit_transform(bow_matrix)
+
+    normalized = TfidfTransformer().fit_transform(bow_matrix)
+    similarity_graph = normalized * normalized.T
+
+    nx_graph = nx.from_scipy_sparse_matrix(similarity_graph)
+    scores = nx.pagerank(nx_graph)
+    return sorted(((scores[i], s) for i, s in enumerate(sentences)),
+                  reverse=True)
+def orderSentences(rankedList, data, initSentences):
+    index = ['']*len(data)
+    # print(rankedList)
+    for eachRanked in rankedList[0:int(math.ceil(0.2*len(rankedList)))]:
+        sen = eachRanked[1]
+        index[data.index(sen)] = initSentences[data.index(sen)]
+        # print(data.index(sen))
+    return index
+
+def extract_ner(sentence_ner,row_no):
+    parsed_text = {'sentence':[], 'word':[], 'ner':[]}
+    words = re.findall("([^<]+)<[^>]+>",sentence_ner)
+    tags = re.findall("<([^>]+)>",sentence_ner)
+    
+    # for word in words: append word #we need to write seperate tags
+    for index in range(len(words)):
+        parsed_text['word'].append(words[index])
+        parsed_text['ner'].append(tags[index])
+        parsed_text['sentence'].append(row_no)
+    
+    return pd.DataFrame(parsed_text)
