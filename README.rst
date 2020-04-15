@@ -32,5 +32,6 @@ From this data we want to produce a visual narrative so that any individual can 
 Note
 ====
 
+Comparing OCR models: Tesseract and Transkribus for Devanagari script.
 Please check-out the comparision of OCR for hindi/sanskrit text. 
 https://github.com/ramayanaocr/ocr-comparison
